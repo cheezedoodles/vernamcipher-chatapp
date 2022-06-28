@@ -4,7 +4,7 @@ from . import views
 
 urlpatterns = [
     path('chats/', views.ChatList.as_view()),
-    path('chat/<int:pk>/', views.message_list),
+    path('chat/<int:chat_id>/', views.MessageList.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

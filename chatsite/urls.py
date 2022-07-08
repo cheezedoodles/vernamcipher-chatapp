@@ -15,9 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from django.views.decorators.csrf import csrf_exempt
 
 urlpatterns = [
+    path('chats/', include('chat.urls', namespace='chats')),
     path('admin/', admin.site.urls),
     path('api/', include('api.urls')),
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]

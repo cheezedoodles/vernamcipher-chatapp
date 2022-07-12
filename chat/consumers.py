@@ -2,6 +2,8 @@ import json
 
 from channels.generic.websocket import AsyncWebsocketConsumer
 
+from .db_operations import save_text_message
+
 
 class ChatConsumer(AsyncWebsocketConsumer):
 
@@ -35,7 +37,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def chat_message(self, event):
         message = event['message']
+        print(message)
 
         await self.send(text_data=json.dumps({
             'message': message
         }))
+        await save_text_message(self.chat_id, message)

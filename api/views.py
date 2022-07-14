@@ -13,6 +13,7 @@ from knox.views import LoginView as KnoxLoginView
 from .serializers import (ChatSerializer, MessageSerializer,
                           UserSerializer, AuthSerializer)
 from chat.models import Chat, Message
+from .permissions import RelatedToChatPermission
 
 
 class ChatListView(generics.ListCreateAPIView):
@@ -25,7 +26,6 @@ class ChatListView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        print(user)
         return Chat.objects.filter(Q(sent_from_id=user.id) |
                                    Q(sent_to_id=user.id))
 
@@ -55,23 +55,28 @@ class MessageListView(generics.ListCreateAPIView):
     """
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [RelatedToChatPermission]
 
     def list(self, request, chat_id):
         queryset = self.get_queryset()
+
         serializer = MessageSerializer(
             queryset.filter(chat_id=chat_id),
-            many=True
+            many=True,
         )
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
         channel_layer = get_channel_layer()
+
         chat_id = request.data['chat_id']
         message = request.data['message']
+
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+
         self.perform_create(serializer)
+
         async_to_sync(channel_layer.group_send)
         (
             f'chat_{chat_id}',
@@ -80,6 +85,7 @@ class MessageListView(generics.ListCreateAPIView):
                 'message': message
             },
         )
+
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED,
                         headers=headers)

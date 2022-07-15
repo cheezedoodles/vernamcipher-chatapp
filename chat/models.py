@@ -22,4 +22,4 @@ class Message(models.Model):
         ordering = ('created',)
 
     def __str__(self):
-        return f'Message sent at {self.created} from chat id {self.chat_id}'
+        return f'Chat {self.chat_id} message sent at {self.created}'

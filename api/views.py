@@ -55,7 +55,7 @@ class MessageListView(generics.ListCreateAPIView):
     """
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
-    permission_classes = [RelatedToChatPermission]
+    permission_classes = [permissions.IsAuthenticated, RelatedToChatPermission]
 
     def list(self, request, chat_id):
         queryset = self.get_queryset()

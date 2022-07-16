@@ -15,10 +15,10 @@ class ChatSerializer(serializers.ModelSerializer):
 class MessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
-        fields = ['id', 'chat_id', 'message', 'created']
+        fields = ['id', 'chat_id', 'message', 'created']  # TODO: прокинь в него ещё, как зависимый сериализатор
 
 
-class UserSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):  # TODO: Лучше разделить на папки под message, user, chat
     class Meta:
         model = User
         fields = ['username', 'password']
@@ -46,7 +46,7 @@ class AuthSerializer(serializers.Serializer):
         )
 
         if not user:
-            msg = ('Unable to authenticate with provided credentials')
+            msg = ('Unable to authenticate with provided credentials')  # TODO: Оборачивать в скобочки не стоит
             raise serializers.ValidationError(msg, code='authentication')
 
         attrs['user'] = user

@@ -16,7 +16,7 @@ from chat.models import Chat, Message
 from .permissions import RelatedToChatPermission
 
 
-class ChatListView(generics.ListCreateAPIView):
+class ChatListView(generics.ListCreateAPIView):  # TODO: А не будет баги из-за пагинации?
     """
     API endpoint used for listing and creating chats
     """
@@ -57,7 +57,7 @@ class MessageListView(generics.ListCreateAPIView):
     serializer_class = MessageSerializer
     permission_classes = [permissions.IsAuthenticated, RelatedToChatPermission]
 
-    def list(self, request, chat_id):
+    def list(self, request, chat_id):  # TODO: проверь соответствие сигнатур базовой и твоей
         queryset = self.get_queryset()
 
         serializer = MessageSerializer(
@@ -78,7 +78,7 @@ class MessageListView(generics.ListCreateAPIView):
         self.perform_create(serializer)
 
         async_to_sync(channel_layer.group_send)
-        (
+        (  # TODO: Тут баг, если async_to_sync возвращает вызываемый объект, то он не вызовется из-за переноса
             f'chat_{chat_id}',
             {
                 'type': 'chat_message',

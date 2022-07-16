@@ -17,7 +17,7 @@ from django.core.asgi import get_asgi_application
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'chatsite.settings')
 django_asgi_app = get_asgi_application()
 
-import chat.routing
+import chat.routing  # TODO Импортни выше
 
 application = ProtocolTypeRouter({
   "http": django_asgi_app,

@@ -1,8 +1,8 @@
 from django.contrib import admin
-from .models import (
+from chat.models import (
     Chat,
     Message,
-)  # TODO: просто заметка, будь осторожен с относительными импортами
+)  
 
 
 @admin.register(Chat)

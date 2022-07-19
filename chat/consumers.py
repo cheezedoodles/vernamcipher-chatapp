@@ -6,13 +6,19 @@ from .db_operations import save_text_message
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
+
+    def __init__(self):
+        self.chat_id = None
+        self.chat_group_name = None
+        super().__init__()
+
     async def connect(self):
         self.chat_id = self.scope["url_route"]["kwargs"][
             "chat_id"
-        ]  # TODO: Опять же не объявляй вне __init__ или класса
+        ]
         self.chat_group_name = (
             "chat_%s" % self.chat_id
-        )  # TODO: Опять же не объявляй вне __init__ или класса
+        )
 
         await self.channel_layer.group_add(self.chat_group_name, self.channel_name)
         await self.accept()

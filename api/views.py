@@ -23,7 +23,7 @@ from .permissions import RelatedToChatPermission
 
 class ChatListView(
     generics.ListCreateAPIView
-):  # TODO: А не будет баги из-за пагинации?
+):
     """
     API endpoint used for listing and creating chats
     """

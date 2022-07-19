@@ -9,20 +9,27 @@ from chat.models import Chat, Message
 class ChatSerializer(serializers.ModelSerializer):
     class Meta:
         model = Chat
-        fields = ['id', 'sent_from_id', 'sent_to_id']
+        fields = ["id", "sent_from_id", "sent_to_id"]
 
 
 class MessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
-        fields = ['id', 'chat_id', 'message', 'created']  # TODO: прокинь в него ещё, как зависимый сериализатор
+        fields = [
+            "id",
+            "chat_id",
+            "message",
+            "created",
+        ]  # TODO: прокинь в него ещё, как зависимый сериализатор
 
 
-class UserSerializer(serializers.ModelSerializer):  # TODO: Лучше разделить на папки под message, user, chat
+class UserSerializer(
+    serializers.ModelSerializer
+):  # TODO: Лучше разделить на папки под message, user, chat
     class Meta:
         model = User
-        fields = ['username', 'password']
-        extra_kwargs = {'password': {'write_only': True}}
+        fields = ["username", "password"]
+        extra_kwargs = {"password": {"write_only": True}}
 
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
@@ -31,22 +38,19 @@ class UserSerializer(serializers.ModelSerializer):  # TODO: Лучше разд�
 class AuthSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField(
-        style={'input_type': 'password'},
-        trim_whitespace=False
+        style={"input_type": "password"}, trim_whitespace=False
     )
 
     def validate(self, attrs):
-        username = attrs.get('username')
-        password = attrs.get('password')
+        username = attrs.get("username")
+        password = attrs.get("password")
 
         user = authenticate(
-            request=self.context.get('request'),
-            username=username,
-            password=password
+            request=self.context.get("request"), username=username, password=password
         )
 
         if not user:
-            msg = ('Unable to authenticate with provided credentials')  # TODO: Оборачивать в скобочки не стоит
-            raise serializers.ValidationError(msg, code='authentication')
+            msg = "Unable to authenticate with provided credentials"  # TODO: Оборачивать в скобочки не стоит
+            raise serializers.ValidationError(msg, code="authentication")
 
-        attrs['user'] = user
+        attrs["user"] = user

@@ -18,11 +18,8 @@ class MessageListView(generics.ListCreateAPIView):
     serializer_class = MessageSerializer
     permission_classes = [permissions.IsAuthenticated, RelatedToChatPermission]
 
-    def list(
-        self, request, chat_id
-    ):  # TODO: проверь соответствие сигнатур базовой и твоей
+    def list(self, request, chat_id, *args, **kwargs):
         queryset = self.get_queryset()
-
         serializer = MessageSerializer(
             queryset.filter(chat_id=chat_id),
             many=True,
@@ -32,7 +29,6 @@ class MessageListView(generics.ListCreateAPIView):
     def create(self, request, *args, **kwargs):
         channel_layer = get_channel_layer()
 
-        print(request.data)
         chat_id = request.data["chat_id"]
         message = request.data["message"]
 
@@ -41,8 +37,7 @@ class MessageListView(generics.ListCreateAPIView):
 
         self.perform_create(serializer)
 
-        async_to_sync(channel_layer.group_send)
-        (  # TODO: Тут баг, если async_to_sync возвращает вызываемый объект, то он не вызовется из-за переноса
+        async_to_sync(channel_layer.group_send)(
             f"chat_{chat_id}",
             {"type": "chat_message", "message": message},
         )

@@ -1,5 +1,5 @@
 from channels.db import database_sync_to_async
-from .models import Chat, Message
+from chat.models import Chat, Message
 
 
 @database_sync_to_async

@@ -26,7 +26,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         text_data_json = json.loads(text_data)
         message = text_data_json["message"]
 
-        await save_text_message(self.chat_id, message)
+        await save_text_message(self.chat_id, self.user, message)
 
         await self.channel_layer.group_send(
             self.chat_group_name,

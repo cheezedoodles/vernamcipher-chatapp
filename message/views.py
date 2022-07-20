@@ -24,14 +24,15 @@ class MessageListView(generics.ListCreateAPIView):
             queryset.filter(chat_id=chat_id),
             many=True,
         )
+
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
         channel_layer = get_channel_layer()
 
         chat_id = request.data["chat_id"]
+        username = request.data["username"]
         message = request.data["message"]
-
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
@@ -39,7 +40,7 @@ class MessageListView(generics.ListCreateAPIView):
 
         async_to_sync(channel_layer.group_send)(
             f"chat_{chat_id}",
-            {"type": "chat_message", "message": message},
+            {"type": "chat_message", "username": username, "message": message},
         )
 
         headers = self.get_success_headers(serializer.data)

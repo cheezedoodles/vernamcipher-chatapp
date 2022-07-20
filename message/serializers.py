@@ -10,4 +10,9 @@ class MessageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Message
-        fields = ["id", "chat_id", "message", "created"]
+        fields = ["id", "chat_id", "user", "message", "created"]
+
+    def to_representation(self, instance):
+        rep = super(MessageSerializer, self).to_representation(instance)
+        rep["user"] = instance.user.username
+        return rep

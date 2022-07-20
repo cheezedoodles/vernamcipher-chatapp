@@ -9,12 +9,13 @@ class ChatConsumer(AsyncWebsocketConsumer):
     def __init__(self):
         self.chat_id = None
         self.chat_group_name = None
+        self.user = None
         super().__init__()
 
     async def connect(self):
         self.chat_id = self.scope["url_route"]["kwargs"]["chat_id"]
+        self.user = self.scope["url_route"]["kwargs"]["username"]
         self.chat_group_name = "chat_%s" % self.chat_id
-
         await self.channel_layer.group_add(self.chat_group_name, self.channel_name)
         await self.accept()
 
@@ -28,14 +29,19 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await save_text_message(self.chat_id, message)
 
         await self.channel_layer.group_send(
-            self.chat_group_name, {"type": "chat_message", "message": message}
+            self.chat_group_name,
+            {"type": "chat_message", "message": message, "username": self.user},
         )
 
     async def chat_message(self, event):
+        user = event["username"]
         message = event["message"]
 
         await self.send(
             text_data=json.dumps(
-                {"message": message}  # TODO: Возможно, стоит добавить юзера
+                {
+                    "username": user,
+                    "message": message,
+                }
             )
         )

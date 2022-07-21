@@ -8,6 +8,5 @@ def save_text_message(id, username, message):
 
     chat_id = Chat.objects.get(id=id)
     user = User.objects.get(username=username)
-    print(username, "in db operations")
 
     return Message.objects.create(chat_id=chat_id, user=user, message=message)

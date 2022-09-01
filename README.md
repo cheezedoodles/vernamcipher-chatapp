@@ -4,10 +4,10 @@ vernamcipher-chatapp is a chat application made with DRF, Django-Channels and we
 
 ## Installation
 
-For now you can clone from the staging branch, but it will be merged with master soon.
+Staging branch was merged with master, so now you can just use git clone:
 
 ```bash
-git clone --branch staging https://github.com/cheezedoodles/vernamcipher-chatapp.git
+git clone https://github.com/cheezedoodles/vernamcipher-chatapp.git
 ```
 ## Database model
 
